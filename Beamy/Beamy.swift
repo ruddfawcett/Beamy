@@ -14,7 +14,7 @@ enum BeamyState {
 }
 
 public class BeamyScanner: NSObject  {
-    let sharedInstance = BeamyScanner()
+    static let sharedInstance = BeamyScanner()
     var peripherals: [CBPeripheral] = []
     var centralManager: CBCentralManager!
 //    let scanner: Scanner?
