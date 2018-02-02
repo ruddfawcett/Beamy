@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		F14D13C7201BB980000FB171 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F14D13C6201BB980000FB171 /* CoreBluetooth.framework */; };
 		F14D13CB201BBA8F000FB171 /* Beamy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14D13CA201BBA8F000FB171 /* Beamy.swift */; };
-		F14D13CD201BBADB000FB171 /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14D13CC201BBADB000FB171 /* Scanner.swift */; };
+		F14D13CD201BBADB000FB171 /* BeamyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14D13CC201BBADB000FB171 /* BeamyManager.swift */; };
+		F181539E202102CB0049A9E6 /* BeamyPeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = F181539D202102CB0049A9E6 /* BeamyPeripheral.swift */; };
 		F1BB123D2020FC4200371663 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BB123C2020FC4200371663 /* AppDelegate.swift */; };
 		F1BB12422020FC4200371663 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F1BB12402020FC4200371663 /* Main.storyboard */; };
 		F1BB12442020FC4200371663 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1BB12432020FC4200371663 /* Assets.xcassets */; };
@@ -18,6 +19,10 @@
 		F1BB124F2020FE6900371663 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BB123E2020FC4200371663 /* ViewController.swift */; };
 		F1BB12502020FE9700371663 /* Beamy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14D13CA201BBA8F000FB171 /* Beamy.swift */; };
 		F1BB1253202100A400371663 /* Beamy_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F14D13AD201BB608000FB171 /* Beamy_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F1E9968D2024CA0000561325 /* BeamyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14D13CC201BBADB000FB171 /* BeamyManager.swift */; };
+		F1E9968E2024CA0200561325 /* BeamyPeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = F181539D202102CB0049A9E6 /* BeamyPeripheral.swift */; };
+		F1E996902024CEEF00561325 /* BeamyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E9968F2024CEEF00561325 /* BeamyData.swift */; };
+		F1E996912024CEF200561325 /* BeamyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E9968F2024CEEF00561325 /* BeamyData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,7 +56,8 @@
 		F14D13C6201BB980000FB171 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		F14D13C8201BB986000FB171 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/System/Library/Frameworks/CoreBluetooth.framework; sourceTree = DEVELOPER_DIR; };
 		F14D13CA201BBA8F000FB171 /* Beamy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beamy.swift; sourceTree = "<group>"; };
-		F14D13CC201BBADB000FB171 /* Scanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scanner.swift; sourceTree = "<group>"; };
+		F14D13CC201BBADB000FB171 /* BeamyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeamyManager.swift; sourceTree = "<group>"; };
+		F181539D202102CB0049A9E6 /* BeamyPeripheral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeamyPeripheral.swift; sourceTree = "<group>"; };
 		F1BB123A2020FC4100371663 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1BB123C2020FC4200371663 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F1BB123E2020FC4200371663 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -59,6 +65,7 @@
 		F1BB12432020FC4200371663 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F1BB12462020FC4200371663 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F1BB12482020FC4200371663 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F1E9968F2024CEEF00561325 /* BeamyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeamyData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,7 +113,9 @@
 				F14D13A0201BB5DE000FB171 /* Beamy.h */,
 				F14D13A1201BB5DE000FB171 /* Info.plist */,
 				F14D13CA201BBA8F000FB171 /* Beamy.swift */,
-				F14D13CC201BBADB000FB171 /* Scanner.swift */,
+				F1E9968F2024CEEF00561325 /* BeamyData.swift */,
+				F14D13CC201BBADB000FB171 /* BeamyManager.swift */,
+				F181539D202102CB0049A9E6 /* BeamyPeripheral.swift */,
 			);
 			path = Beamy;
 			sourceTree = "<group>";
@@ -248,7 +257,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F14D13CD201BBADB000FB171 /* Scanner.swift in Sources */,
+				F181539E202102CB0049A9E6 /* BeamyPeripheral.swift in Sources */,
+				F14D13CD201BBADB000FB171 /* BeamyManager.swift in Sources */,
+				F1E996902024CEEF00561325 /* BeamyData.swift in Sources */,
 				F14D13CB201BBA8F000FB171 /* Beamy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -259,6 +270,9 @@
 			files = (
 				F1BB12502020FE9700371663 /* Beamy.swift in Sources */,
 				F1BB124F2020FE6900371663 /* ViewController.swift in Sources */,
+				F1E9968E2024CA0200561325 /* BeamyPeripheral.swift in Sources */,
+				F1E9968D2024CA0000561325 /* BeamyManager.swift in Sources */,
+				F1E996912024CEF200561325 /* BeamyData.swift in Sources */,
 				F1BB123D2020FC4200371663 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

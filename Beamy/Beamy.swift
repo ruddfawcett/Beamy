@@ -9,50 +9,37 @@
 import Foundation
 import CoreBluetooth
 
-enum BeamyState {
-    
+private class BeamySingleton {
+    var identifier: String?
 }
 
-public class BeamyScanner: NSObject  {
-    static let sharedInstance = BeamyScanner()
-    var peripherals: [CBPeripheral] = []
-    var centralManager: CBCentralManager!
-//    let scanner: Scanner?
+public class Beamy: NSObject  {
+    static let sharedInstance = Beamy()
+    private static let setup = BeamySingleton()
     
-    let identifier: String = Bundle.main.bundleIdentifier!
+    let manager: BeamyManager?
+    let identifier: String!
+    
+    var peripherals: [CBPeripheral] = []
+    
+    class func initiate(identifier: String) {
+        Beamy.setup.identifier = identifier
+        _ = Beamy.sharedInstance
+    }
     
     override init() {
+        self.identifier = Beamy.setup.identifier
+        guard identifier != nil else {
+            fatalError("Use initiate first in order to create a new Beamy instance.")
+        }
+        
+        manager = BeamyManager(self.identifier)
         super.init()
-        centralManager = CBCentralManager(delegate: self, queue: DispatchQueue.main)
-    }
-}
-
-extension BeamyScanner: CBCentralManagerDelegate {
-    public func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        if central.state == .poweredOn {
-            self.centralManager.scanForPeripherals(withServices: nil, options: nil)
-        }
-        else {
-            // Bluetooth may be off.
-        }
     }
     
-    public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        if !peripherals.contains(peripheral) {
-            peripherals.append(peripheral)
-            print(peripheral.name ?? "No peripheral name...")
-        }
+    func broadcast(string: String) {
+        self.manager?.peripheralManager.startAdvertising()
     }
-
-    public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-
-    }
-
-    public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-
-    }
-
-    public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-
-    }
+    
+    func send(
 }
