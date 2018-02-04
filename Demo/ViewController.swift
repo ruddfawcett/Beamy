@@ -19,12 +19,12 @@ class ViewController: UIViewController, BeamyManagerDelegate {
         Beamy.sharedInstance.manager!.delegate = self
     }
     
-    func manager(didDiscover peripheral: CBPeripheral, withAdvertisementData data: BeamyAdvertisementData) {
-        print(peripheral.name)
+    func manager(didDiscover device: BeamyDevice, withAdvertisementData data: BeamyAdvertisementData) {
+        print(device.peripheral.name ?? "N/A")
     }
     
-    func manager(didConnect peripheral: CBPeripheral) {
-        print(peripheral.name)
+    func manager(didConnect device: BeamyDevice) {
+        print(device.peripheral.name ?? "N/A")
     }
 
     override func didReceiveMemoryWarning() {
