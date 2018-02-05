@@ -37,9 +37,11 @@ public class Beamy: NSObject  {
         super.init()
     }
     
-    func broadcast(string: String) {
-        self.manager?.peripheralManager.startAdvertising()
+    func broadcast(message: BeamyMessage<AnyObject>) {
+        self.manager?.advertise(message: message)
     }
     
-    func send(
+    func send(message: BeamyMessage<AnyObject>, to peripheral: BeamyDevice)  {
+        self.manager?.advertise(message: message, forTarget: peripheral)
+    }
 }
