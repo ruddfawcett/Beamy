@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 
 private class BeamySingleton {
-    var identifier: String?
+    var UUID: String?
 }
 
 public class Beamy: NSObject  {
@@ -18,26 +18,27 @@ public class Beamy: NSObject  {
     private static let setup = BeamySingleton()
     
     let manager: BeamyManager?
-    let identifier: String!
+    let UUID: String!
+    let identifier: String? = ""
     
     var peripherals: [CBPeripheral] = []
     
-    class func initiate(identifier: String) {
-        Beamy.setup.identifier = identifier
+    class func initiate(UUID: String) {
+        Beamy.setup.UUID = UUID
         _ = Beamy.sharedInstance
     }
     
     override init() {
-        self.identifier = Beamy.setup.identifier
-        guard identifier != nil else {
+        self.UUID = Beamy.setup.UUID
+        guard UUID != nil else {
             fatalError("Use initiate first in order to create a new Beamy instance.")
         }
         
-        manager = BeamyManager(self.identifier)
+        manager = BeamyManager(CBUUID(string: self.UUID))
         super.init()
     }
     
-    func broadcast(message: BeamyMessage<AnyObject>) {
+    func broadcast(message: BeamyMessage<String>) {
         self.manager?.advertise(message: message)
     }
     
