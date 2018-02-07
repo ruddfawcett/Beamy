@@ -13,19 +13,35 @@ enum BeamyMessageType {
 }
 
 struct BeamyMessage<T> {
-    var type: BeamyMessageType!
-    var body: T?
-    
-    init(_  body: T,  type: BeamyMessageType) {
-        self.body = body
-        self.type = type
+    var body: T!
+    var dataString: String {
+        get {
+            return self.toDataString()
+        }
     }
     
-    func toData() -> Data {
-        if body is String {
-            let str =  body as! String
-            return str.data(using: .utf8)!
+    init(_  body: T) {
+        self.body = body
+    }
+    
+    func toDataString() -> String {
+        var bodyString = ""
+        
+        if self.body is String {
+            bodyString = self.body as! String
         }
-        return Data()
+        
+        if self.body is Data {
+            let data = self.body as! Data
+            bodyString = data.base64EncodedString(options: .init(rawValue: 0))
+        }
+        
+        let payload: [String: String] = [
+            "body": ,
+            "type":
+        ]
+        
+//        return
+        return ""
     }
 }
