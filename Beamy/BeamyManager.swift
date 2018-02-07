@@ -19,12 +19,12 @@ enum BeamyManagerDiscoverability {
 }
 
 protocol BeamyManagerDelegate {
-    func manager(didDiscover device: BeamyDevice, withAdvertisementData data: BeamyAdvertisementData)
+    func manager(didDiscover device: BeamyDevice, withMessage message: BeamyMessage)
     func manager(didConnect device: BeamyDevice)
 }
 
 class BeamyManager: NSObject {
-    var identifier: CBUUID
+    var UUID: CBUUID
     var centralManager: CBCentralManager!
     var peripheralManager: CBPeripheralManager!
     var dispatchQueue: DispatchQueue
@@ -43,9 +43,9 @@ class BeamyManager: NSObject {
     
     var delegate: BeamyManagerDelegate?
     
-    required init(_ identifier: String) {
-        self.identifier = CBUUID(string: identifier)
-        self.dispatchQueue = DispatchQueue(label: identifier)
+    required init(_ UUID: CBUUID) {
+        self.UUID = UUID
+        self.dispatchQueue = DispatchQueue(label: UUID.uuidString)
         
         super.init()
         
@@ -54,39 +54,34 @@ class BeamyManager: NSObject {
     }
     
     func advertise() {
-//        self.peripheralManager.startAdvertising([:])
+        let message = BeamyMessage("TEST")
+        self.advertise(message: message)
     }
     
-    func advertise(message: BeamyMessage<AnyObject>) {
+    func advertise(message: BeamyMessage<String>) {
         let advertisingData: [String : Any] =  [
-            CBAdvertisementDataLocalNameKey: UIDevice.current.name,
-            CBAdvertisementDataServiceUUIDsKey: [self.identifier]
+            CBAdvertisementDataLocalNameKey: message.data.base64Encoded()!,
+            CBAdvertisementDataServiceUUIDsKey: [self.UUID]
             ]
         
-        //        // create our characteristics
-        //        CBMutableCharacteristic *characteristic =
-        //            [[CBMutableCharacteristic alloc] initWithType:self.uuid
-        //                properties:CBCharacteristicPropertyRead
-        //                value:[self.username dataUsingEncoding:NSUTF8StringEncoding]
-        //                permissions:CBAttributePermissionsReadable];
-        //
-        //        // create the service with the characteristics
-        //        CBMutableService *service = [[CBMutableService alloc] initWithType:self.uuid primary:YES];
-        //        service.characteristics = @[characteristic];
-        //        [self.peripheralManager addService:service];
-    
+        let characteristic = CBMutableCharacteristic(type: self.UUID, properties: CBCharacteristicProperties.read, value: message.toData(), permissions: CBAttributePermissions.readable)
+        
+        let service: CBMutableService = CBMutableService(type: self.UUID, primary: true)
+        service.characteristics = [characteristic]
+        
+        self.peripheralManager.add(service)
         self.peripheralManager.startAdvertising(advertisingData)
     }
     
     func advertise(message: BeamyMessage<AnyObject>, forTarget target: BeamyDevice) {
         let advertisingData: [String : Any] =  [
             CBAdvertisementDataLocalNameKey: UIDevice.current.name,
-            CBAdvertisementDataServiceUUIDsKey: [self.identifier.uuidString, target.peripheral.name!]
+            CBAdvertisementDataServiceUUIDsKey: [self.UUID.uuidString, target.peripheral.name!]
         ]
         
-        let characteristic = CBMutableCharacteristic(type: self.identifier, properties: CBCharacteristicProperties.read, value: message.toData(), permissions: CBAttributePermissions.readable)
+        let characteristic = CBMutableCharacteristic(type: self.UUID, properties: CBCharacteristicProperties.read, value: message.toData(), permissions: CBAttributePermissions.readable)
         
-        let service: CBMutableService = CBMutableService(type: self.identifier, primary: true)
+        let service: CBMutableService = CBMutableService(type: self.UUID, primary: true)
         service.characteristics = [characteristic]
         
         self.peripheralManager.add(service)
@@ -97,21 +92,14 @@ class BeamyManager: NSObject {
 extension BeamyManager: CBCentralManagerDelegate {
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state == .poweredOn {
-            self.centralManager.scanForPeripherals(withServices: nil, options: nil)
-        }
-        else {
-            
+            self.centralManager.scanForPeripherals(withServices: [self.UUID], options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
         }
     }
     
     public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        if let UUIDKeys = advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [String] {
-            if UUIDKeys.contains(self.identifier.uuidString) { // or if also contains the other unique identifier
-                let data: BeamyAdvertisementData = BeamyAdvertisementData(advertisementData)
-                let device = BeamyDevice(peripheral: peripheral)
-                delegate?.manager(didDiscover: device, withAdvertisementData: data)
-            }
-        }
+        let message: BeamyMessage = BeamyMessage(data: advertisementData)
+        let device = BeamyDevice(peripheral: peripheral)
+        delegate?.manager(didDiscover: device, withData: data)
     }
     
     public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
@@ -128,12 +116,29 @@ extension BeamyManager: CBCentralManagerDelegate {
 }
 
 extension BeamyManager: CBPeripheralManagerDelegate {
+    func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
+        print("Advertising...")
+    }
+    
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         if peripheral.state == .poweredOn {
-            self.centralManager.scanForPeripherals(withServices: [self.identifier], options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
+            self.advertise()
         }
-        else {
-            
+    }
+}
+
+extension String {
+    func base64Encoded() -> String? {
+        if let data = self.data(using: .utf8) {
+            return data.base64EncodedString()
         }
+        return nil
+    }
+    
+    func base64Decoded() -> String? {
+        if let data = Data(base64Encoded: self) {
+            return String(data: data, encoding: .utf8)
+        }
+        return nil
     }
 }
