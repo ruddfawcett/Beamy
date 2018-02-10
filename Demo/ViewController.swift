@@ -34,8 +34,7 @@ class ViewController: UIViewController, BeamyManagerDelegate {
     func manager(didDiscover device: BeamyDevice, withMessage message: BeamyMessage) {
         if !self.alertVisible {
             self.alertVisible = true
-            self.alert = UIAlertController(title: "Discovered Device", message: "\(device.peripheral.name ?? "N/A")", preferredStyle: UIAlertControllerStyle.alert)
-            print(data.rawData)
+            self.alert = UIAlertController(title: "Discovered Device", message: "\(message.body as? String ?? "N/A")", preferredStyle: UIAlertControllerStyle.alert)
             self.alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { (action) in
                 self.alertVisible = false
             }))
@@ -46,7 +45,11 @@ class ViewController: UIViewController, BeamyManagerDelegate {
     func manager(didConnect device: BeamyDevice) {
         print(device.peripheral.name ?? "N/A")
     }
-
+    
+    @IBAction func broadcast(_ sender: Any) {
+        Beamy.sharedInstance.broadcast(message: BeamyMessage("Test"))
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
