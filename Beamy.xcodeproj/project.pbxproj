@@ -23,8 +23,6 @@
 		F1BB1253202100A400371663 /* Beamy_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F14D13AD201BB608000FB171 /* Beamy_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F1E9968D2024CA0000561325 /* BeamyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14D13CC201BBADB000FB171 /* BeamyManager.swift */; };
 		F1E9968E2024CA0200561325 /* BeamyDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = F181539D202102CB0049A9E6 /* BeamyDevice.swift */; };
-		F1E996902024CEEF00561325 /* BeamyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E9968F2024CEEF00561325 /* BeamyData.swift */; };
-		F1E996912024CEF200561325 /* BeamyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E9968F2024CEEF00561325 /* BeamyData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,7 +66,6 @@
 		F1BB12432020FC4200371663 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F1BB12462020FC4200371663 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F1BB12482020FC4200371663 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F1E9968F2024CEEF00561325 /* BeamyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeamyData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,7 +113,6 @@
 				F14D13A0201BB5DE000FB171 /* Beamy.h */,
 				F14D13A1201BB5DE000FB171 /* Info.plist */,
 				F14D13CA201BBA8F000FB171 /* Beamy.swift */,
-				F1E9968F2024CEEF00561325 /* BeamyData.swift */,
 				F14D13CC201BBADB000FB171 /* BeamyManager.swift */,
 				F12A7E8F2034AE07007AA7DC /* BeamyMessage.swift */,
 				F181539D202102CB0049A9E6 /* BeamyDevice.swift */,
@@ -263,7 +259,6 @@
 			files = (
 				F181539E202102CB0049A9E6 /* BeamyDevice.swift in Sources */,
 				F14D13CD201BBADB000FB171 /* BeamyManager.swift in Sources */,
-				F1E996902024CEEF00561325 /* BeamyData.swift in Sources */,
 				F12A7E902034AE07007AA7DC /* BeamyMessage.swift in Sources */,
 				F14D13CB201BBA8F000FB171 /* Beamy.swift in Sources */,
 			);
@@ -278,7 +273,6 @@
 				F1E9968E2024CA0200561325 /* BeamyDevice.swift in Sources */,
 				F1E9968D2024CA0000561325 /* BeamyManager.swift in Sources */,
 				F1255DF6203757650077A1E9 /* BeamyMessage.swift in Sources */,
-				F1E996912024CEF200561325 /* BeamyData.swift in Sources */,
 				F1BB123D2020FC4200371663 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
