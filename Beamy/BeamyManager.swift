@@ -14,10 +14,6 @@ enum BeamyManagerAdvertisability {
     case poweredOn, poweredOff
 }
 
-enum BeamyManagerDiscoverability {
-    case discoverable, hidden
-}
-
 protocol BeamyManagerDelegate {
     func manager(didDiscover device: BeamyDevice, withMessage message: BeamyMessage)
     func manager(didConnect device: BeamyDevice)
@@ -34,12 +30,8 @@ class BeamyManager: NSObject {
             if newValue == .poweredOff {
                 self.peripheralManager.stopAdvertising()
             }
-            else {
-                self.advertise()
-            }
         }
     }
-    var discoverability: BeamyManagerDiscoverability?
     
     var delegate: BeamyManagerDelegate?
     
@@ -53,18 +45,13 @@ class BeamyManager: NSObject {
         self.peripheralManager = CBPeripheralManager(delegate: self, queue: self.dispatchQueue)
     }
     
-    func advertise() {
-        let message = BeamyMessage("TEST")
-        self.advertise(message: message)
-    }
-    
-    func advertise(message: BeamyMessage<String>) {
+    func advertise(message: BeamyMessage) {
         let advertisingData: [String : Any] =  [
-            CBAdvertisementDataLocalNameKey: message.data.base64Encoded()!,
+            CBAdvertisementDataLocalNameKey: message.dataString,
             CBAdvertisementDataServiceUUIDsKey: [self.UUID]
             ]
         
-        let characteristic = CBMutableCharacteristic(type: self.UUID, properties: CBCharacteristicProperties.read, value: message.toData(), permissions: CBAttributePermissions.readable)
+        let characteristic = CBMutableCharacteristic(type: self.UUID, properties: CBCharacteristicProperties.read, value: message.dataString.data(using: .utf8), permissions: CBAttributePermissions.readable)
         
         let service: CBMutableService = CBMutableService(type: self.UUID, primary: true)
         service.characteristics = [characteristic]
@@ -73,13 +60,13 @@ class BeamyManager: NSObject {
         self.peripheralManager.startAdvertising(advertisingData)
     }
     
-    func advertise(message: BeamyMessage<AnyObject>, forTarget target: BeamyDevice) {
+    func advertise(message: BeamyMessage, forTarget target: BeamyDevice) {
         let advertisingData: [String : Any] =  [
             CBAdvertisementDataLocalNameKey: UIDevice.current.name,
             CBAdvertisementDataServiceUUIDsKey: [self.UUID.uuidString, target.peripheral.name!]
         ]
         
-        let characteristic = CBMutableCharacteristic(type: self.UUID, properties: CBCharacteristicProperties.read, value: message.toData(), permissions: CBAttributePermissions.readable)
+        let characteristic = CBMutableCharacteristic(type: self.UUID, properties: CBCharacteristicProperties.read, value: message.dataString.data(using: .utf8), permissions: CBAttributePermissions.readable)
         
         let service: CBMutableService = CBMutableService(type: self.UUID, primary: true)
         service.characteristics = [characteristic]
@@ -99,7 +86,7 @@ extension BeamyManager: CBCentralManagerDelegate {
     public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         let message: BeamyMessage = BeamyMessage(data: advertisementData)
         let device = BeamyDevice(peripheral: peripheral)
-        delegate?.manager(didDiscover: device, withData: data)
+        delegate?.manager(didDiscover: device, withMessage: message)
     }
     
     public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
@@ -122,7 +109,7 @@ extension BeamyManager: CBPeripheralManagerDelegate {
     
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         if peripheral.state == .poweredOn {
-            self.advertise()
+            print("Powered on...")
         }
     }
 }
