@@ -14,17 +14,30 @@ enum BeamyManagerAdvertisability {
     case poweredOn, poweredOff
 }
 
+/// The BeamyManager protocol which is observed by the user.
 protocol BeamyManagerDelegate {
+    /// Called when a device is discovered advertising the same UUID.
+    ///
+    /// - Parameters:
+    ///   - device: The device that has been discovered.
+    ///   - message: The BeamyMessage that the device is broadcasting.
     func manager(didDiscover device: BeamyDevice, withMessage message: BeamyMessage)
+    
+    /// Called when a device is connected to the current device using Bluetooth.
+    ///
+    /// - Parameter device: The BeamyDevice.
     func manager(didConnect device: BeamyDevice)
 }
 
 class BeamyManager: NSObject {
+    /// The UUID to listen for/advertise to.s
     var UUID: CBUUID
+    /// The underlying CBCentralManager.
     var centralManager: CBCentralManager!
     var peripheralManager: CBPeripheralManager!
     var dispatchQueue: DispatchQueue
     
+    /// Whether or not the current device should be advertising information.
     var advertisability: BeamyManagerAdvertisability? {
         didSet(newValue) {
             if newValue == .poweredOff {
@@ -33,8 +46,12 @@ class BeamyManager: NSObject {
         }
     }
     
+    /// The BeamyManager protocol.
     var delegate: BeamyManagerDelegate?
     
+    /// Creates a  new BeamyManager based upon a UUID.
+    ///
+    /// - Parameter UUID: The UUID.
     required init(_ UUID: CBUUID) {
         self.UUID = UUID
         self.dispatchQueue = DispatchQueue(label: UUID.uuidString)
@@ -45,6 +62,10 @@ class BeamyManager: NSObject {
         self.peripheralManager = CBPeripheralManager(delegate: self, queue: self.dispatchQueue)
     }
     
+    
+    /// Advertises a BeamyMessage to the surrounding Bluetooth devices.
+    ///
+    /// - Parameter message: The BeamyMessage to advertise.
     func advertise(message: BeamyMessage) {
         let advertisingData: [String : Any] =  [
             CBAdvertisementDataLocalNameKey: message.dataString,
@@ -60,6 +81,12 @@ class BeamyManager: NSObject {
         self.peripheralManager.startAdvertising(advertisingData)
     }
     
+    
+    /// Advertises a BeamyMessage to a particular BeamyDevice.
+    ///
+    /// - Parameters:
+    ///   - message: The BeamyMessage to advertise.
+    ///   - target: The BeamyDevice to target.
     func advertise(message: BeamyMessage, forTarget target: BeamyDevice) {
         let advertisingData: [String : Any] =  [
             CBAdvertisementDataLocalNameKey: UIDevice.current.name,
@@ -115,6 +142,9 @@ extension BeamyManager: CBPeripheralManagerDelegate {
 }
 
 extension String {
+    /// Base64 encodes a string.
+    ///
+    /// - Returns: The encoded string.
     func base64Encoded() -> String? {
         if let data = self.data(using: .utf8) {
             return data.base64EncodedString()
@@ -122,6 +152,9 @@ extension String {
         return nil
     }
     
+    /// Decodes a base64 string.
+    ///
+    /// - Returns: The decoded string.
     func base64Decoded() -> String? {
         if let data = Data(base64Encoded: self) {
             return String(data: data, encoding: .utf8)

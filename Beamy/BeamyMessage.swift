@@ -9,29 +9,47 @@
 import Foundation
 import CoreBluetooth
 
+/// The type of Beamy message.
+///
+/// - string: A string containing only text.
+/// - data: Contains a representation of another object (such as an image, sound, etc.)
+/// - vibration: Communicated as a vibration, is sent as a signal for the other device to vibrate.
 enum BeamyMessageType {
     case string, data, vibration
 }
 
 struct BeamyMessage {
-    // From broadcasted device...
+    // MARK: - Variables used when receiving a message from another device.
+    
+    // The raw data contained in the advertisement data.
     let rawData: [String : Any]
+    /// The data contained in the advertisement.
     var data: [String: Any] = [:]
+    /// The ID of the message (a random string).
     var messageID: String?
     
-    // From client device...
+    // MARK: - Variables used when sending a message from a client device.
+    
+    /// The body of the message.
     var body: Any!
+    /// A  base64 representation of the entire message.
     var dataString: String {
         get {
             return self.generate() ?? ""
         }
     }
 
+    /// Creates a new BeamyMessage from user provided data.
+    ///
+    /// - Parameter body: The message body.
     init(_  body: Any) {
         self.body = body
         self.rawData = [:]
     }
     
+    /// Creates a new BeamyMessage from advertisement data.
+    ///
+    /// - Parameter data: The advertisementData from the CBPeripheralManagerDelegate.
     init(data: [String : Any]) {
         self.rawData = data
         
@@ -40,6 +58,9 @@ struct BeamyMessage {
         }
     }
     
+    /// Parses a   base64 encoded dictionary representation.
+    ///
+    /// - Parameter string: The dataString to parse.
     private mutating func parse(dataString string: String) {
         do {
             if let decodedData = string.base64Decoded()?.data(using: .utf8) {
@@ -53,6 +74,9 @@ struct BeamyMessage {
         }
     }
     
+    /// Generates a base64 representation of a dictionary.
+    ///
+    /// - Returns: The base64 string.
     private func generate() -> String! {
         var payload:[String: String] = [:]
         
