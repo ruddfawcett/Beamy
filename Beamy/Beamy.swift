@@ -83,4 +83,12 @@ extension Beamy: BeamyManagerDelegate {
     func manager(didReceiveMessage message: BeamyMessage, fromDevice device: BeamyDevice) {
         return
     }
+    
+    func manager(didBeginAdvertising advertising: Bool, withError error: Error?) {
+        return
+    }
+    
+    func manager(didUpdateState state: CBManagerState, fromPeripheral peripheral: CBPeripheralManager) {
+        return
+    }
 }

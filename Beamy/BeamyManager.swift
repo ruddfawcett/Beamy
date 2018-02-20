@@ -34,6 +34,20 @@ protocol BeamyManagerDelegate {
     ///   - message: The BeamyMessage that the device is broadcasting.
     ///   - device: The device that has been discovered.
     func manager(didReceiveMessage message: BeamyMessage, fromDevice device: BeamyDevice)
+    
+    /// Called when the manager starts advertising data.
+    ///
+    /// - Parameters:
+    ///   - advertising: Whether or not it's advertising.
+    ///   - error: An error (if applicable).
+    func manager(didBeginAdvertising advertising: Bool, withError error: Error?)
+    
+    /// Called when the state of the underlying CBManager is updated.
+    ///
+    /// - Parameters:
+    ///   - state: The new state.
+    ///   - peripheral: The new peripheral.
+    func manager(didUpdateState state: CBManagerState, fromPeripheral peripheral: CBPeripheralManager)
 }
 
 class BeamyManager: NSObject {
@@ -152,12 +166,17 @@ extension BeamyManager: CBCentralManagerDelegate {
 
 extension BeamyManager: CBPeripheralManagerDelegate {
     func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
-        print("Advertising...")
+        if error == nil {
+            delegate?.manager(didBeginAdvertising: true, withError: error)
+        }
+        else {
+            delegate?.manager(didBeginAdvertising: false, withError: error)
+        }
     }
     
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         if peripheral.state == .poweredOn {
-            print("Powered on...")
+            delegate?.manager(didUpdateState: peripheral.state, fromPeripheral: peripheral)
         }
     }
 }

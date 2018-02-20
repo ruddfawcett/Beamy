@@ -61,4 +61,12 @@ extension ViewController: BeamyManagerDelegate {
         print(device.peripheral.name ?? "N/A")
         print(message.body as? String ?? "N/A")
     }
+    
+    func manager(didUpdateState state: CBManagerState, fromPeripheral peripheral: CBPeripheralManager) {
+        print(state)
+    }
+    
+    func manager(didBeginAdvertising advertising: Bool, withError error: Error?) {
+        print(advertising)
+    }
 }
