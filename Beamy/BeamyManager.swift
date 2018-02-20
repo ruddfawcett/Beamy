@@ -16,22 +16,32 @@ enum BeamyManagerAdvertisability {
 
 /// The BeamyManager protocol which is observed by the user.
 protocol BeamyManagerDelegate {
-    /// Called when a device is discovered advertising the same UUID.
+    /// Called when a device is discovered advertising the same UUID
+    ///
+    /// - Parameter device: The device that has been discovered.
+    
+    func manager(didDiscover device: BeamyDevice)
+    /// Called when a device is discovered advertising the same UUID and with a  message.
     ///
     /// - Parameters:
-    ///   - device: The device that has been discovered.
     ///   - message: The BeamyMessage that the device is broadcasting.
-    func manager(didDiscover device: BeamyDevice, withMessage message: BeamyMessage)
+    ///   - device: The device that has been discovered.
+    func manager(didDiscover message: BeamyMessage, fromDevice device: BeamyDevice)
     
-    /// Called when a device is connected to the current device using Bluetooth.
+    /// Called when a device is discovered with a message specifically for it.
     ///
-    /// - Parameter device: The BeamyDevice.
-    func manager(didConnect device: BeamyDevice)
+    /// - Parameters:
+    ///   - message: The BeamyMessage that the device is broadcasting.
+    ///   - device: The device that has been discovered.
+    func manager(didReceiveMessage message: BeamyMessage, fromDevice device: BeamyDevice)
 }
 
 class BeamyManager: NSObject {
     /// The UUID to listen for/advertise to.s
     var UUID: CBUUID
+    /// The identifier for a message exchange.
+    var identifier: String?
+    
     /// The underlying CBCentralManager.
     var centralManager: CBCentralManager!
     var peripheralManager: CBPeripheralManager!
@@ -113,7 +123,18 @@ extension BeamyManager: CBCentralManagerDelegate {
     public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         let message: BeamyMessage = BeamyMessage(data: advertisementData)
         let device = BeamyDevice(peripheral: peripheral)
-        delegate?.manager(didDiscover: device, withMessage: message)
+        delegate?.manager(didDiscover: device)
+        
+        if !(message.body as! String).isEmpty {
+            if self.identifier == message.recepient {
+                delegate?.manager(didReceiveMessage: message, fromDevice: device)
+            }
+            else {
+                if message.isPublic {
+                    delegate?.manager(didReceiveMessage: message, fromDevice: device)
+                }
+            }
+        }
     }
     
     public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {

@@ -10,7 +10,7 @@ import UIKit
 import Beamy_iOS
 import CoreBluetooth
 
-class ViewController: UIViewController, BeamyManagerDelegate {
+class ViewController: UIViewController {
     var alert: UIAlertController!
     var alertVisible: Bool = false
     
@@ -31,7 +31,22 @@ class ViewController: UIViewController, BeamyManagerDelegate {
         Beamy.sharedInstance.manager!.delegate = self
     }
     
-    func manager(didDiscover device: BeamyDevice, withMessage message: BeamyMessage) {
+    @IBAction func broadcast(_ sender: Any) {
+        Beamy.sharedInstance.broadcast(message: BeamyMessage("Test"))
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+}
+
+extension ViewController: BeamyManagerDelegate {
+    func manager(didDiscover device: BeamyDevice) {
+        print(device.peripheral.name ?? "N/A")
+    }
+    
+    func manager(didDiscover message: BeamyMessage, fromDevice device: BeamyDevice) {
         if !self.alertVisible {
             self.alertVisible = true
             self.alert = UIAlertController(title: "Discovered Device", message: "\(message.body as? String ?? "N/A")", preferredStyle: UIAlertControllerStyle.alert)
@@ -42,16 +57,8 @@ class ViewController: UIViewController, BeamyManagerDelegate {
         }
     }
     
-    func manager(didConnect device: BeamyDevice) {
+    func manager(didReceiveMessage message: BeamyMessage, fromDevice device: BeamyDevice) {
         print(device.peripheral.name ?? "N/A")
-    }
-    
-    @IBAction func broadcast(_ sender: Any) {
-        Beamy.sharedInstance.broadcast(message: BeamyMessage("Test"))
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        print(message.body as? String ?? "N/A")
     }
 }

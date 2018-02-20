@@ -22,9 +22,18 @@ public class Beamy: NSObject  {
     /// The UUID to broadcast/listen for.
     let UUID: String!
     /// A different identifier to listen for.
-    let identifier: String? = ""
-    /// A list of discovered peripherals.
-    var peripherals: [CBPeripheral] = []
+    private var _identifier: String?
+    var identifier: String? {
+        set(newValue) {
+            self._identifier = newValue
+            manager?.identifier = newValue
+        }
+        get {
+            return self._identifier
+        }
+    }
+    /// A list of discovered devices.
+    var devices: [BeamyDevice] = []
     
     /// Creates a new Beamy object.
     ///
@@ -42,6 +51,7 @@ public class Beamy: NSObject  {
         
         manager = BeamyManager(CBUUID(string: self.UUID))
         super.init()
+        manager?.delegate = self
     }
     
     /// Braodcasts a message to all devices listening for the same UUID.
@@ -58,5 +68,19 @@ public class Beamy: NSObject  {
     ///   - peripheral: The  BeamyDevice to send it to.
     func send(message: BeamyMessage, to peripheral: BeamyDevice)  {
         self.manager?.advertise(message: message, forTarget: peripheral)
+    }
+}
+
+extension Beamy: BeamyManagerDelegate {
+    func manager(didDiscover device: BeamyDevice) {
+        self.devices.append(device)
+    }
+    
+    func manager(didDiscover message: BeamyMessage, fromDevice device: BeamyDevice) {
+        return
+    }
+    
+    func manager(didReceiveMessage message: BeamyMessage, fromDevice device: BeamyDevice) {
+        return
     }
 }

@@ -27,6 +27,16 @@ struct BeamyMessage {
     var data: [String: Any] = [:]
     /// The ID of the message (a random string).
     var messageID: String?
+    /// The recepient of the message (a random string).
+    var recepient: String?
+    /// Whether or not the message is public.
+    private var _public: Bool = false
+    /// Getter for private variable
+    var isPublic: Bool! {
+        get {
+            return self._public
+        }
+    }
     
     // MARK: - Variables used when sending a message from a client device.
     
@@ -67,6 +77,8 @@ struct BeamyMessage {
                 let decodedDictionary = try JSONSerialization.jsonObject(with: decodedData, options: [])
                 if let dictionary = decodedDictionary as? [String:String] {
                     self.body = dictionary["body"]
+                    self.recepient = dictionary["recepient"]
+                    self._public = dictionary["is_public"] == "yes" ? true : false
                 }
             }
         } catch {
